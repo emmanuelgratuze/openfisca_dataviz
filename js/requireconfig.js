@@ -22,6 +22,7 @@ require.config({
         'DetailChartV': 'views/DetailChartV',
         'LocatingChartV': 'views/LocatingChartV',
         'AggregateChart': 'views/modals/AggregateChart',
+        'WaterfallChart': 'views/modals/WaterfallChart',
 
         /* Models */
         'DetailChartM': 'models/DetailChartM',

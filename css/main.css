@@ -60,6 +60,10 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+svg {
+    border: 1px solid black;
+    margin: 20px;
+}
 
 
 

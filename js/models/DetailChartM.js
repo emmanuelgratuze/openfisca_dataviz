@@ -93,7 +93,7 @@ define([
 						                          "description": "Salaires super bruts", 
 						                          "type": 0, 
 						                          "values": [
-						                            31980.864067156686
+						                            30080.864067156686
 						                          ], 
 						                          "color": [
 						                            0, 
@@ -106,7 +106,7 @@ define([
 						                          "description": "Cotisations sociales patronales", 
 						                          "type": 0, 
 						                          "values": [
-						                            -9844.182355745226
+						                            -10081.182355745226
 						                          ], 
 						                          "color": [
 						                            249, 
@@ -173,7 +173,7 @@ define([
 						                      "description": "Primes", 
 						                      "type": 0, 
 						                      "values": [
-						                        5534.170427852865
+						                        5.170427852865
 						                      ], 
 						                      "color": [
 						                        0, 
@@ -186,7 +186,7 @@ define([
 						                      "description": "Cotisations sociales salari\u00e9es", 
 						                      "type": 0, 
 						                      "values": [
-						                        -3041.5800671479346
+						                        -13041.5800671479346
 						                      ], 
 						                      "color": [
 						                        243, 
@@ -1419,7 +1419,13 @@ define([
 				this.groupByAll();
 			},
 			render: function () {},
-			parse: function () { /* Return datas */
+
+			/* 
+				** Parse datas **
+				- Delete objects with null value
+				- Create "value" property equal to values[0]
+			*/
+			parse: function () {
 				var json = this.get('source').children.revdisp;
 					json._id = 'revdisp';
 
@@ -1429,17 +1435,20 @@ define([
 						json.children = [];
 
 					_.each(old_children, function (el, name) {
-						var newEl = el;
+
+						if(el.values[0] != 0) {
+							var newEl = el;
 							newEl._id = name;
 
-						if(el.children) {
-							doIt(el);
+							if(el.children) { doIt(el); }
+							else {
+								newEl.value = newEl.values[0];
+
+								/* Add isPositive */
+								if(newEl.value != 0) newEl.isPositive = (newEl.value > 0) ? true : false;
+							}
+							json.children.push(newEl);
 						}
-						else {
-							newEl.value = newEl.values[0];
-							if(newEl.value != 0) newEl.isPositive = (newEl.value > 0) ? true : false;
-						}
-						json.children.push(newEl);
 					});
 					return json;
 				};
@@ -1464,11 +1473,12 @@ define([
 				return groupedDatas;
 			},
 			groupByAll: function () {
-				var groupedDatas = [];
-				var doIt = function (obj) {
+				var groupedDatas = jQuery.extend(true, {}, this.get('datas'));
+					groupedDatas.children = [];
+					doIt = function (obj) {
 					_.each(obj, function (el, name) {
 						if(el.hasOwnProperty('children')) {doIt(el.children);}
-						else groupedDatas.push(el);
+						else groupedDatas.children.push(el);
 					});
 				};
 				doIt(this.get('datas').children);
